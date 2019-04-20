@@ -1,5 +1,6 @@
 package com.example.mapapp03;
 
+import android.app.Activity;
 import android.content.Context;
 import android.icu.text.IDNA;
 import android.location.Address;
@@ -54,7 +55,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-        Toast.makeText(this,getAddress(this, 40.0,140.0), Toast.LENGTH_LONG).show();
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                Toast.makeText(MapsActivity.this, getAddress(MapsActivity.this, latLng.latitude, latLng.longitude), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+//        Toast.makeText(this,getAddress(this, 40.0,140.0), Toast.LENGTH_LONG).show();
     }
 
     public static String getAddress(
@@ -62,7 +70,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         List<Address> addresses;
-        StringBuilder result = new StringBuilder();
+
 
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
@@ -79,6 +87,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //            }
 //        }
 //        return result.toString();
-        return 	addresses.get(0).getCountryName();
+        Log.d("国名", "国名　:" + addresses.toString());
+        try {
+            return 	addresses.get(0).getCountryName();
+        }
+        catch (Exception e){
+            return "存在しません";
+        }
     }
 }
